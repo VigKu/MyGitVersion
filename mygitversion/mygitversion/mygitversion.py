@@ -1,4 +1,16 @@
 import click
+import os
+import configparser
+import yaml
+import datetime
+import hashlib
+import shutil
+import json
+import requests
+#from click_help_colors import HelpColorsGroup,HelpColorsCommand
+#from click_didyoumean import DYMGroup
+
+from utilities import intialize_for_mygitversion
 
 # convert main function as CLI using #click.xxx
 #@click.command()
@@ -10,7 +22,7 @@ def cli():
 @cli.command()
 def init():
     """Create an empty mygitversion repository"""
-    pass
+    intialize_for_mygitversion()
 
 @cli.command()
 def status():
