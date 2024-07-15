@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "mygitversion"
+version = "0.0.1"
+description = "A simple GIT version clone."
+authors = ["VigKu <vignesh1404@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+click = "^8.1.7"
+click-help-colors = "^0.9.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
