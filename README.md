@@ -4,9 +4,10 @@
 '''bash
 mygitversion --help
 mygitversion clone url
-mygitversion init
+mygitversion init -
+mygitversion config -
 mygitversion status
-mygitversion add
+mygitversion add -
 mygitversion commit
 mygitversion push
 mygitversion rm

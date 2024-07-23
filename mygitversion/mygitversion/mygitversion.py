@@ -30,15 +30,44 @@ def status():
     pass
 
 @cli.command()
-def add():
+@click.argument("files", nargs=-1)
+def add(files):
     """Add file contents to the index"""
-    pass
+    for file in files:
+        click.echo("Adding To Staging::{}".format(file))
+        add_file_to_index_in_staging(file)
 
 @cli.command()
 def commit():
     """Record changes to the repository"""
     pass
 
+@cli.command()
+@click.argument('key')
+@click.argument('value')
+def config(key, value):
+    """Get and set repository or global options.
+
+    mygitversion config user.name <name>
+
+    """
+
+    app_dir = click.get_app_dir("mygitversion")
+    # app_dir = C:\Users\vigne\AppData\Roaming\mygitversion
+
+    if not os.path.exists(app_dir):
+        os.makedirs(app_dir)
+    cfg = os.path.join(app_dir, "config")
+
+    config = configparser.ConfigParser()
+    config.read(cfg)
+    section, key = key.split(".")
+    if not config.has_section(section):
+        config.add_section(section)
+    config.set(section, key, value)
+
+    with open(cfg, "w") as configfile:
+        config.write(configfile)
 
 @cli.command()
 def clone():
@@ -69,5 +98,12 @@ def restore():
     """Restore working tree files when deleted - undo"""
     pass
 
-if __name__ == '__main__':
+
+def add_file_to_index_in_staging(filename):
+    path = ".mygitversion/index"
+    content = "{},{}\n".format(filename, datetime.datetime.now())
+    with open(path, "a+") as f:
+        f.write(content)
+
+if __name__ == "__main__":
     cli()
