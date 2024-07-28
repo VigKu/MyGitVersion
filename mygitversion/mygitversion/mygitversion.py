@@ -10,7 +10,7 @@ import requests
 #from click_help_colors import HelpColorsGroup,HelpColorsCommand
 #from click_didyoumean import DYMGroup
 
-from utilities import intialize_for_mygitversion
+from utilities import add_file_to_index_in_staging, commit_file_to_repo, ignore_core_files, intialize_for_mygitversion, mygitversionignore_file_filter, read_log_file, read_username_from_config, save_file_to_repo
 
 # convert main function as CLI using #click.xxx
 #@click.command()
@@ -38,9 +38,22 @@ def add(files):
         add_file_to_index_in_staging(file)
 
 @cli.command()
-def commit():
+@click.option('--message','-m',help='Provide commit messag.')
+def commit(message):
     """Record changes to the repository"""
-    pass
+    username = read_username_from_config("name")
+    # MARKER = '# Everything below is ignored\n'
+    # msg = click.edit('\n\n' + MARKER)
+    # if msg is not None:
+    #     return msg.split(MARKER, 1)[0].rstrip('\n')
+
+    commit_file_to_repo(message, username)
+    src_files = ignore_core_files(mygitversionignore_file_filter("."))
+
+    with click.progressbar(src_files) as _files:
+        for file in _files:
+            save_file_to_repo(file)
+        click.echo("Added Files to Local Repo")
 
 @cli.command()
 @click.argument('key')
@@ -77,7 +90,9 @@ def clone():
 @cli.command()
 def log():
     """Shows a Log history"""
-    pass
+    """Shows a Log history"""
+    log_results = read_log_file()
+    click.echo_via_pager(log_results)
 
 @cli.command()
 def push():
@@ -98,12 +113,6 @@ def restore():
     """Restore working tree files when deleted - undo"""
     pass
 
-
-def add_file_to_index_in_staging(filename):
-    path = ".mygitversion/index"
-    content = "{},{}\n".format(filename, datetime.datetime.now())
-    with open(path, "a+") as f:
-        f.write(content)
 
 if __name__ == "__main__":
     cli()

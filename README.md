@@ -8,9 +8,9 @@ mygitversion init -
 mygitversion config -
 mygitversion status
 mygitversion add -
-mygitversion commit
+mygitversion commit -
 mygitversion push
 mygitversion rm
 mygitversion restore
-mygitversion log
+mygitversion log -
 '''
