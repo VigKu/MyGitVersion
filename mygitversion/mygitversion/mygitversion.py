@@ -38,7 +38,7 @@ def add(files):
         add_file_to_index_in_staging(file)
 
 @cli.command()
-@click.option('--message','-m',help='Provide commit messag.')
+@click.option('--message','-m',help='Provide commit message.')
 def commit(message):
     """Record changes to the repository"""
     username = read_username_from_config("name")
@@ -89,7 +89,6 @@ def clone():
 
 @cli.command()
 def log():
-    """Shows a Log history"""
     """Shows a Log history"""
     log_results = read_log_file()
     click.echo_via_pager(log_results)
