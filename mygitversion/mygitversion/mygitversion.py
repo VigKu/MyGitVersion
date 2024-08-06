@@ -10,7 +10,7 @@ import requests
 #from click_help_colors import HelpColorsGroup,HelpColorsCommand
 #from click_didyoumean import DYMGroup
 
-from utilities import add_file_to_index_in_staging, commit_file_to_repo, ignore_core_files, intialize_for_mygitversion, mygitversionignore_file_filter, read_log_file, read_username_from_config, save_file_to_repo
+from utilities import add_file_to_index_in_staging, commit_file_to_repo, ignore_core_files, intialize_for_mygitversion, mygitversionignore_file_filter, read_log_file, read_username_from_config, save_file_to_repo, scan_working_tree
 
 # convert main function as CLI using #click.xxx
 #@click.command()
@@ -25,9 +25,11 @@ def init():
     intialize_for_mygitversion()
 
 @cli.command()
-def status():
+@click.argument("directory", default=".")
+def status(directory):
     """Show the working tree status"""
-    pass
+    scan_working_tree(directory)
+
 
 @cli.command()
 @click.argument("files", nargs=-1)

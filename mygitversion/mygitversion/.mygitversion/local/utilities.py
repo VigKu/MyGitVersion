@@ -4,8 +4,6 @@ import hashlib
 import os
 import shutil
 import click
-import yaml
-import json
 
 def touch(path):
     """Create file
@@ -42,76 +40,6 @@ def read_username_from_config(key):
     result = config.read(cfg)
     result_key = config.get("user", key)
     return result_key
-
-# Status
-# Scan files for modified time
-def scan_files(myfiles):
-    timestamp = os.stat(myfiles).st_mtime
-    return timestamp
-
-
-def log_modification(directory="."):
-    result = dict(
-        [
-            (f, scan_files(f))
-            for f in ignore_core_files(mygitversionignore_file_filter(directory))
-        ]
-    )
-    return result
-
-
-def save_to_file(filename, data):
-    with open(filename, "w") as f:
-        json.dump(data, f)
-
-
-def load_from_file(filename):
-    with open(filename) as f:
-        data = json.load(f)
-        f.close()
-    return data
-
-
-def dict_compare(d1, d2):
-    d1_keys = set(d1.keys())
-    d2_keys = set(d2.keys())
-    shared_keys = d1_keys.intersection(d2_keys)
-    added = d2_keys - d1_keys
-    removed = d1_keys - d2_keys
-    modified = {o: (d1[o], d2[o]) for o in shared_keys if d1[o] != d2[o]}
-    unchanged = set(o for o in shared_keys if d1[o] == d2[o])
-    return {
-        "Added": list(added),
-        "Removed": list(removed),
-        "Modified": list(modified.keys()),
-        "Untracked": list(unchanged),
-    }
-
-
-def scan_working_tree(directory=".", before=".mygitversion/before_logs.json"):
-    """
-    scan files
-    log modification
-    save to json file for current scan
-    read from previous file :before_json
-    compare previous and current files
-    """
-    try:
-        if os.path.isfile(before):
-            current_stats = log_modification(directory)
-            before_stats = load_from_file(before)
-            data = dict_compare(before_stats, current_stats)
-            print(yaml.dump(data, default_flow_style=False))
-        else:
-            current_stats = log_modification(directory)
-            save_to_file(".mygitversion/before_logs.json", current_stats)
-            before_stats = load_from_file(before)
-            data = dict_compare(before_stats, current_stats)
-            print(yaml.dump(data, default_flow_style=False))
-
-    except Exception as e:
-        raise e
-
 
 # Commit
 def generate_commit_hash(message):
@@ -150,12 +78,5 @@ def mygitversionignore_file_filter(path):
 
 
 def ignore_core_files(files):
-    #ignore_files = [f for f in files if not f.startswith("mygitversion")]
-    #return ignore_files
-    return files
-
-def read_log_file():
-    path_to_commit_msg = ".mygitversion/COMMIT_MSG"
-    with open(path_to_commit_msg, "r+") as f:
-        result = f.read()
-    return result
+    ignore_files = [f for f in files if not f.startswith("mygitversion")]
+    return ignore_files
