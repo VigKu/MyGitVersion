@@ -1,12 +1,12 @@
 ### MyGitVersion -Build my own git versioning
-
+### Cmd: python mygitversion.py <option>
 ### Features
 '''bash
 mygitversion --help
 mygitversion clone url
 mygitversion init -
 mygitversion config -
-mygitversion status
+mygitversion status -
 mygitversion add -
 mygitversion commit -
 mygitversion push

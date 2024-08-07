@@ -10,7 +10,7 @@ import requests
 #from click_help_colors import HelpColorsGroup,HelpColorsCommand
 #from click_didyoumean import DYMGroup
 
-from utilities import add_file_to_index_in_staging, commit_file_to_repo, ignore_core_files, intialize_for_mygitversion, mygitversionignore_file_filter, read_log_file, read_username_from_config, save_file_to_repo, scan_working_tree
+from utilities import add_file_to_index_in_staging, commit_file_to_repo, download_file, ignore_core_files, intialize_for_mygitversion, mygitversionignore_file_filter, push_file_to_remote, read_log_file, read_username_from_config, remove_files, restore_file_from_local, save_file_to_repo, scan_working_tree
 
 # convert main function as CLI using #click.xxx
 #@click.command()
@@ -85,9 +85,11 @@ def config(key, value):
         config.write(configfile)
 
 @cli.command()
-def clone():
+@click.argument("src")
+@click.argument("destination", required=False)
+def clone(src, destination):
     """Clone a repository into a new directory"""
-    pass
+    download_file(src)
 
 @cli.command()
 def log():
@@ -96,23 +98,39 @@ def log():
     click.echo_via_pager(log_results)
 
 @cli.command()
-def push():
+@click.argument("repository")
+@click.argument("branch")
+def push(repository, branch):
     """Update remote refs along with associated
     mygitversion push repo branch
     mygitversion push origin master
+
     """
-    pass
+    username = click.prompt("Username for https://mygithub.com")
+    password = click.prompt(
+        f"Password for https://{username}@mygithub.com", hide_input=True
+    )
+    src_files = ignore_core_files(mygitversionignore_file_filter(".mygitversion/local"))
+    with click.progressbar(src_files) as _files:
+        for file in _files:
+            push_file_to_remote(file)
+        click.echo("Push to Remote Repository")
 
 @cli.command()
-def rm():
+@click.argument("files", nargs=-1)
+def rm(files):
     """Remove files from the working tree"""
-    pass
+    for file in files:
+        remove_files(file)
 
 
 @cli.command()
-def restore():
-    """Restore working tree files when deleted - undo"""
-    pass
+@click.argument("files", nargs=-1)
+def restore(files):
+    """Restore working tree files when deleted"""
+    for file in files:
+        restore_file_from_local(file)
+        click.secho(f"Restored {file}", fg="cyan")
 
 
 if __name__ == "__main__":
