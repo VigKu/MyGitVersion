@@ -1,4 +1,4 @@
-### MyGitVersion -Build my own git versioning
+### MyGitVersion Tutorial -Build my own git versioning based on a udemy course: https://www.udemy.com/course/dvc-and-git-for-data-science/
 ### Cmd: python mygitversion.py <option>
 ### Features
 '''bash
